@@ -1013,7 +1013,7 @@ playability status is: {status} \
             self.logger.critical("Missing streamingData key in json!")
             # TODO add fallback strategy with get_ytplayer_config()?
 
-        return self._player_config_args
+        return self._player_config_args   
 
     @property
     def fmt_streams(self):
@@ -1030,20 +1030,18 @@ playability status is: {status} \
         stream_maps = ["url_encoded_fmt_stream_map"]
 
         # unscramble the progressive and adaptive stream manifests.
-        for fmt in stream_maps:
-            # if not self.age_restricted and fmt in self.vid_info:
-            #     extract.apply_descrambler(self.vid_info, fmt)
-            pytube.extract.apply_descrambler(self.player_config_args, fmt)
+        for fmt in stream_maps:          
+            if 'streamingData' not in self.player_config_args["player_response"]:
+                self.logger.critical("Missing streamingData key in json!")
+                return []
 
-            pytube.extract.apply_signature(self.player_config_args, fmt, self.js)
+            stream_manifest = []
+            stream_manifest = pytube.extract.apply_descrambler(self.player_config_args['player_response']['streamingData'])           
+            pytube.extract.apply_signature(stream_manifest, self.video_info, self.js)
 
-            # build instances of :class:`Stream <Stream>`
-            # Initialize stream objects
-            stream_manifest = self.player_config_args[fmt]
-            for stream in stream_manifest:
+            for stream in stream_manifest:               
                 video = pytube.Stream(
-                    stream=stream,
-                    player_config_args=self.player_config_args,
+                    stream=stream,                    
                     monostate=None,
                 )
                 self._fmt_streams.append(video)

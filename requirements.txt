@@ -1,4 +1,4 @@
-pytube==10.9.2
+pytube
 Pillow
 #pytest
 # yt-dlp
