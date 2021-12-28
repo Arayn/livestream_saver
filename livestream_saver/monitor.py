@@ -1,5 +1,6 @@
 from pathlib import Path
 from time import sleep
+import datetime
 from random import uniform
 import logging
 from typing import Optional, Any, List, Dict
@@ -549,8 +550,9 @@ def wait_block(min_minutes=15.0, variance=3.5):
     min_seconds = min_minutes * 60
     max_seconds = min_seconds + (variance * 60)
     wait_time_sec = uniform(min_seconds, max_seconds)
-    wait_time_min = wait_time_sec / 60
-    logger.info(f"Sleeping for {wait_time_min:.2f} minutes ({wait_time_sec:.2f} seconds)...")
+    wait_time_min = wait_time_sec / 60        
+    wait_dateTime = datetime.datetime.now() + datetime.timedelta(minutes=wait_time_min)
+    logger.info(f"Sleeping for {wait_time_min:.2f} minutes ({wait_time_sec:.2f} seconds)... [{wait_dateTime.strftime('%H:%M:%S')}]")    
     sleep(wait_time_sec)
 
 
